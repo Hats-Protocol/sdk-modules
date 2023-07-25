@@ -207,9 +207,17 @@ export class StakingEligibilityClient {
         hash,
       });
 
+      const event = decodeEventLog({
+        abi: ABI,
+        eventName: "StakingEligibility_UnstakeBegun",
+        data: receipt.logs[0].data,
+        topics: receipt.logs[0].topics,
+      });
+
       return {
         status: receipt.status,
         transactionHash: receipt.transactionHash,
+        cooldownEnd: event.args.cooldownEnd,
       };
     } catch (err) {
       throw new TransactionRevertedError("Transaction reverted");
@@ -353,7 +361,7 @@ export class StakingEligibilityClient {
       const hash = await this._walletClient.writeContract({
         address: instance,
         abi: ABI,
-        functionName: "forgive",
+        functionName: "withdraw",
         args: [recipient],
         account,
         chain: this._walletClient.chain,

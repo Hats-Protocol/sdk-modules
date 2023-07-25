@@ -1,7 +1,9 @@
 import type { Address } from "viem";
 import type { TransactionResult } from "../../../types";
 
-export interface BeginUnstakeResult extends TransactionResult {}
+export interface BeginUnstakeResult extends TransactionResult {
+  cooldownEnd: bigint;
+}
 
 export interface CompleteUnstakeResult extends TransactionResult {}
 
