@@ -3,6 +3,7 @@ import {
   WalletClient,
   encodePacked,
   encodeAbiParameters,
+  decodeEventLog,
 } from "viem";
 import type { Account, Address } from "viem";
 import {
@@ -27,6 +28,7 @@ import type {
   ChangeJudgeHatResult,
   ChangeRecipientHatResult,
   ChangeCooldownPeriodResult,
+  CreateInstanceResult,
 } from "./types";
 import { ABI } from "./abi";
 
@@ -38,7 +40,6 @@ export class StakingEligibilityClient {
     publicClient,
     walletClient,
   }: {
-    instance: Address;
     publicClient: PublicClient;
     walletClient?: WalletClient;
   }) {
@@ -61,7 +62,7 @@ export class StakingEligibilityClient {
   }
 
   /*//////////////////////////////////////////////////////////////
-                      Write Functions
+                      Deploy Instance
     //////////////////////////////////////////////////////////////*/
 
   async createInstance({
@@ -80,7 +81,7 @@ export class StakingEligibilityClient {
     recipientHat: bigint;
     coolDownPeriod: bigint;
     token: Address;
-  }) {
+  }): Promise<CreateInstanceResult> {
     if (this._walletClient === undefined) {
       throw new MissingWalletClientError(
         // eslint-disable-next-line prettier/prettier
@@ -115,14 +116,27 @@ export class StakingEligibilityClient {
         hash,
       });
 
+      const event = decodeEventLog({
+        abi: ABI,
+        eventName: "StakingEligibility_Deployed",
+        data: receipt.logs[0].data,
+        topics: receipt.logs[0].topics,
+      });
+
       return {
         status: receipt.status,
         transactionHash: receipt.transactionHash,
+        newInstance: event.args.instance,
       };
     } catch (err) {
+      console.log(err);
       throw new TransactionRevertedError("Transaction reverted");
     }
   }
+
+  /*//////////////////////////////////////////////////////////////
+                      Write Functions
+    //////////////////////////////////////////////////////////////*/
 
   async stake({
     account,
@@ -585,7 +599,7 @@ export class StakingEligibilityClient {
     return { stake: result[0], isSlashed: result[1] };
   }
 
-  async getCooldowns({
+  async getCooldown({
     instance,
     staker,
   }: {

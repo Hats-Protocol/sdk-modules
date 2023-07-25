@@ -1,7 +1,7 @@
 import type { Address } from "viem";
 
 export const HATS_MODULE_FACTORY: Address =
-  "0xFCCe6D16101f3a924B3bFC7feA6350546fbFC2Eb";
+  "0x60f7bE2ffc5672934146713fAe20Df350F21d8E2";
 
 export const HATS_MODULE_FACTORY_ABI = [
   {

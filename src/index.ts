@@ -1,3 +1,6 @@
-import { StakingEligibilityInfo } from "modules/eligibility/staking";
+import {
+  StakingEligibilityInfo,
+  StakingEligibilityClient,
+} from "./modules/eligibility/staking";
 
-export { StakingEligibilityInfo };
+export { StakingEligibilityInfo, StakingEligibilityClient };
