@@ -281,7 +281,6 @@ describe("Staking Eligibility Tests Scenario 1", () => {
 describe("Staking Eligibility Tests Scenario 2", () => {
   let publicClient: PublicClient;
   let walletClient: WalletClient;
-  let testClient: TestClient;
   let stakingEligibilityClient: StakingEligibilityClient;
   let hatsClient: HatsClient;
   let address1: Address;
@@ -314,10 +313,6 @@ describe("Staking Eligibility Tests Scenario 2", () => {
     });
     walletClient = createWalletClient({
       chain: goerli,
-      transport: http("http://127.0.0.1:8545"),
-    });
-    testClient = createTestClient({
-      mode: "anvil",
       transport: http("http://127.0.0.1:8545"),
     });
 
