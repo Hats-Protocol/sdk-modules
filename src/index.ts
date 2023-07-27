@@ -3,4 +3,14 @@ import {
   StakingEligibilityClient,
 } from "./modules/eligibility/staking";
 
-export { StakingEligibilityInfo, StakingEligibilityClient };
+import {
+  JokeraceEligibilityInfo,
+  JokeraceEligibilityClient,
+} from "./modules/eligibility/jokerace";
+
+export {
+  StakingEligibilityInfo,
+  StakingEligibilityClient,
+  JokeraceEligibilityInfo,
+  JokeraceEligibilityClient,
+};
