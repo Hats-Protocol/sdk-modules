@@ -17,6 +17,9 @@ import type {
   PrivateKeyAccount,
   TestClient,
 } from "viem";
+import { createAnvil } from "@viem/anvil";
+import type { Anvil } from "@viem/anvil";
+import "dotenv/config";
 
 describe("Staking Eligibility Tests Scenario 1", () => {
   let publicClient: PublicClient;
@@ -34,8 +37,15 @@ describe("Staking Eligibility Tests Scenario 1", () => {
 
   let testToken: Address;
   let instance: Address;
+  let anvil: Anvil;
 
   beforeAll(async () => {
+    anvil = createAnvil({
+      forkUrl: process.env.GOERLI_RPC,
+      forkBlockNumber: 9406370n,
+    });
+    await anvil.start();
+
     address1 = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
     address2 = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8";
     account1 = privateKeyToAccount(
@@ -173,7 +183,7 @@ describe("Staking Eligibility Tests Scenario 1", () => {
         instance,
         amount: parseEther("0.5"),
       });
-    });
+    }, 30000);
 
     test("Test staking successful", async () => {
       const stake = await stakingEligibilityClient.getStake({
@@ -215,7 +225,7 @@ describe("Staking Eligibility Tests Scenario 1", () => {
         amount: parseEther("0.5"),
       });
       coolDownEnd = beginUnstakeResult.cooldownEnd;
-    });
+    }, 30000);
 
     test("Test unstake beginning", async () => {
       const cooldown = await stakingEligibilityClient.getCooldown({
@@ -249,7 +259,7 @@ describe("Staking Eligibility Tests Scenario 1", () => {
         instance,
         staker: address2,
       });
-    });
+    }, 30000);
 
     test("Test unstake complete", async () => {
       const cooldown = await stakingEligibilityClient.getCooldown({
@@ -276,6 +286,10 @@ describe("Staking Eligibility Tests Scenario 1", () => {
       expect(balance).toEqual(parseEther("0.6"));
     });
   });
+
+  afterAll(async () => {
+    await anvil.stop();
+  }, 30000);
 });
 
 describe("Staking Eligibility Tests Scenario 2", () => {
@@ -293,8 +307,15 @@ describe("Staking Eligibility Tests Scenario 2", () => {
 
   let testToken: Address;
   let instance: Address;
+  let anvil: Anvil;
 
   beforeAll(async () => {
+    anvil = createAnvil({
+      forkUrl: process.env.GOERLI_RPC,
+      forkBlockNumber: 9406370n,
+    });
+    await anvil.start();
+
     address1 = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
     address2 = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8";
     account1 = privateKeyToAccount(
@@ -428,7 +449,7 @@ describe("Staking Eligibility Tests Scenario 2", () => {
         instance,
         amount: parseEther("0.5"),
       });
-    });
+    }, 30000);
 
     test("Test staking successful", async () => {
       const stake = await stakingEligibilityClient.getStake({
@@ -467,7 +488,7 @@ describe("Staking Eligibility Tests Scenario 2", () => {
         instance,
         staker: address2,
       });
-    });
+    }, 30000);
 
     test("Test slash successful", async () => {
       const stake = await stakingEligibilityClient.getStake({
@@ -499,7 +520,7 @@ describe("Staking Eligibility Tests Scenario 2", () => {
         instance,
         recipient: address1,
       });
-    });
+    }, 30000);
 
     test("Test withdraw successful", async () => {
       const balance = await publicClient.readContract({
@@ -520,7 +541,7 @@ describe("Staking Eligibility Tests Scenario 2", () => {
         instance,
         staker: address2,
       });
-    });
+    }, 30000);
 
     test("Test forgive successful", async () => {
       const stake = await stakingEligibilityClient.getStake({
@@ -539,7 +560,7 @@ describe("Staking Eligibility Tests Scenario 2", () => {
         instance,
         minStake: parseEther("0.4"),
       });
-    });
+    }, 30000);
 
     test("Test change min stake successful", async () => {
       expect(
@@ -556,7 +577,7 @@ describe("Staking Eligibility Tests Scenario 2", () => {
         instance,
         judgeHat: hat_1_1,
       });
-    });
+    }, 30000);
 
     test("Test change judge hat successful", async () => {
       expect(
@@ -573,7 +594,7 @@ describe("Staking Eligibility Tests Scenario 2", () => {
         instance,
         recipientHat: hat_1_1,
       });
-    });
+    }, 30000);
 
     test("Test change recipient hat successful", async () => {
       expect(
@@ -590,7 +611,7 @@ describe("Staking Eligibility Tests Scenario 2", () => {
         instance,
         cooldownPeriod: 3000n,
       });
-    });
+    }, 30000);
 
     test("Test change cool down period successful", async () => {
       expect(
@@ -599,4 +620,8 @@ describe("Staking Eligibility Tests Scenario 2", () => {
       ).toBe(3000n);
     });
   });
+
+  afterAll(async () => {
+    await anvil.stop();
+  }, 30000);
 });

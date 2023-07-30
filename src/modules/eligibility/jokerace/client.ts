@@ -66,7 +66,7 @@ export class JokeraceEligibilityClient {
     contest: Address;
     termEnd: bigint;
     topK: bigint;
-    adminHat: bigint;
+    adminHat?: bigint;
   }): Promise<CreateInstanceResult> {
     if (this._walletClient === undefined) {
       throw new MissingWalletClientError(
@@ -81,7 +81,11 @@ export class JokeraceEligibilityClient {
       [contest, termEnd, topK]
     );
 
-    const otherImmutableArgs = encodePacked(["uint256"], [adminHat]);
+    const otherImmutableArgs = encodePacked(
+      ["uint256"],
+      // eslint-disable-next-line prettier/prettier
+      [adminHat === undefined ? 0n : adminHat]
+    );
 
     try {
       const hash = await this._walletClient.writeContract({
@@ -100,8 +104,8 @@ export class JokeraceEligibilityClient {
       const event = decodeEventLog({
         abi: HATS_MODULE_FACTORY_ABI,
         eventName: "HatsModuleFactory_ModuleDeployed",
-        data: receipt.logs[0].data,
-        topics: receipt.logs[0].topics,
+        data: receipt.logs[1].data,
+        topics: receipt.logs[1].topics,
       });
 
       return {
@@ -119,7 +123,7 @@ export class JokeraceEligibilityClient {
                       Write Functions
     //////////////////////////////////////////////////////////////*/
 
-  async withdraw({
+  async pullElectionResults({
     account,
     instance,
   }: {
@@ -151,6 +155,7 @@ export class JokeraceEligibilityClient {
         transactionHash: receipt.transactionHash,
       };
     } catch (err) {
+      console.log(err);
       throw new TransactionRevertedError("Transaction reverted");
     }
   }
@@ -244,18 +249,18 @@ export class JokeraceEligibilityClient {
 
   async getEligibilityPerContest({
     instance,
-    waerer,
+    wearer,
     contest,
   }: {
     instance: Address;
-    waerer: Address;
+    wearer: Address;
     contest: Address;
   }): Promise<boolean> {
     const result = await this._publicClient.readContract({
       address: instance,
       abi: ABI,
       functionName: "eligibleWearersPerContest",
-      args: [waerer, contest],
+      args: [wearer, contest],
     });
 
     return result;
@@ -263,16 +268,16 @@ export class JokeraceEligibilityClient {
 
   async getWearerStatus({
     instance,
-    waerer,
+    wearer,
   }: {
     instance: Address;
-    waerer: Address;
+    wearer: Address;
   }): Promise<{ eligible: boolean; standing: boolean }> {
     const result = await this._publicClient.readContract({
       address: instance,
       abi: ABI,
       functionName: "getWearerStatus",
-      args: [waerer, 0n],
+      args: [wearer, 0n],
     });
 
     return { eligible: result[0], standing: result[1] };

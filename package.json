@@ -6,7 +6,7 @@
   "main": "dist/modules.cjs.js",
   "module": "dist/modules.esm.js",
   "scripts": {
-    "test": "jest -i",
+    "test": "NODE_OPTIONS=--experimental-vm-modules yarn exec jest -- -i",
     "build": "rollup -c",
     "eslint": "eslint . --ext '.ts,.tsx'",
     "eslint:fix": "eslint . --ext '.ts,.tsx' --fix",
@@ -20,6 +20,7 @@
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "@viem/anvil": "^0.0.6",
+    "dotenv": "^16.3.1",
     "eslint": "^8.45.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^5.0.0",
@@ -28,6 +29,7 @@
     "rollup": "^3.26.3",
     "rollup-plugin-typescript2": "^0.35.0",
     "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.1",
     "tslib": "^2.6.0",
     "typescript": "^5.1.6"
   },
